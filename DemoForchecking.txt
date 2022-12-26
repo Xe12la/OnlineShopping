@@ -1,0 +1,11 @@
+				Description
+Dagger (Attack Speed)	+10 Attack Speed
+Rogue Meteor	 	+15 Attack Speed +10 Critical Strike Chance
+Hero’s Ring	+150 HP	+5 Cooldown Reduction
+Bloodthirsty King		+1550 HP, Unique Passive Bloodlust A kill or assist regens 20% of hero's HP within 5 seconds. 10s cooldown.
+Curse Sword			Unique Effect +30% Damage to Monsters Unique Passive Greed Get an extra 30% Exp when jungling. Regain 4% of maximum health and 10% of mana after monster kill.
+Nimble Blade		Unique Effect +30% Damage to Monsters Unique Passive Greed Get an extra 30% Exp when jungling. 
+Magic Necklace		+10 Mana Regen
+Blood Wings			+150 Magic Power +150 HP.Unique Passive Nirvana Adds 2 HP for every 1 pt of magic power added.
+Swift Boots			+15 Attack Speed	Unique Effect +40 Movement Speed
+Arcane Boots		+15 Magic Damage Reduction	Unique Effect +40 Movement Speed

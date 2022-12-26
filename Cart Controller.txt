@@ -1,0 +1,137 @@
+ public ActionResult Cart()
+        {
+            var data = new List<object>();
+            string email = Session["email"].ToString();
+            var itmcode = Request["itmnum"];
+            var qty = Convert.ToInt32(Request["qty"]);
+            var onhand = 0;
+            var date = DateTime.Now;
+            var price = Request["itemprice"].Trim();
+            var itmimg = "";
+            var name = Request["name"].Trim();
+
+            using (var db = new SqlConnection(connDB))
+            {
+                db.Open();
+                using (var cmd1 = db.CreateCommand())
+                {
+                    cmd1.CommandType = CommandType.Text;
+                    cmd1.CommandText = "SELECT * FROM ITMTBL WHERE ITMNUM ='" + itmcode + "'";
+                    SqlDataReader reader = cmd1.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        itmimg = reader["ITMIMG"].ToString();
+
+                        onhand = Convert.ToInt32(reader["ITMONHAND"]);
+
+                    }
+                }
+                db.Close();
+
+            }
+
+            using (var db2 = new SqlConnection(connDB))
+            {
+                db2.Open();
+                using (var cmd2 = db2.CreateCommand())
+                {
+                    double newOnhand = onhand - qty;
+                    cmd2.CommandType = CommandType.Text;
+                    cmd2.CommandText = "SELECT * FROM ORDERTBL WHERE ITMNO ='" + itmcode + "'";
+                    SqlDataReader reader = cmd2.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        int initialQty = Convert.ToInt32(reader["ITMQTY"]);
+                        int finalQty = initialQty + qty;
+
+                        if (finalQty <= onhand)
+                        {
+
+                            using (var db3 = new SqlConnection(connDB))
+                            {
+                                db3.Open();
+                                using (var cmd3 = db3.CreateCommand())
+                                {
+                                    cmd3.CommandType = CommandType.Text;
+                                    cmd3.CommandText = "UPDATE ORDERTBL SET ITMQTY = '" + finalQty + "' WHERE ITMNO = '" + itmcode + "' ";
+                                    var ctr = cmd3.ExecuteNonQuery();
+
+                                    if (ctr >= 1)
+                                    {
+                                        data.Add(new
+                                        {
+                                            exist = true
+                                        });
+                                    }
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            data.Add(new
+                            {
+                                exist = false
+                            });
+                        }
+
+
+                        return Json(data, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        using (var db3 = new SqlConnection(connDB))
+                        {
+                            db3.Open();
+                            using (var cmd = db3.CreateCommand())
+                            {
+
+                                cmd.CommandType = CommandType.Text;
+                                cmd.CommandText = "INSERT INTO ORDERTBL (ITMNO, ITMQTY, ITMPRICE, DTADDED, ITMNAME, ITMIMG, EMAIL) "
+                                    + "VALUES ("
+                                    + " @ITMNO,"
+                                    + " @ITMQTY,"
+                                    + " @ITMPRICE,"
+                                    + " @DTADDED,"
+                                    + " @NAME,"
+                                    + " @ITMIMG,"
+                                    + " @MAIL)";
+
+                                cmd.Parameters.AddWithValue("@ITMNO", itmcode);
+                                cmd.Parameters.AddWithValue("@ITMQTY", qty);
+                                cmd.Parameters.AddWithValue("@ITMPRICE", price);
+                                cmd.Parameters.AddWithValue("@DTADDED", date);
+                                cmd.Parameters.AddWithValue("@NAME", name);
+                                cmd.Parameters.AddWithValue("@ITMIMG", itmimg);
+                                cmd.Parameters.AddWithValue("@MAIL", email);
+                                var ctr = cmd.ExecuteNonQuery();
+                                if (ctr > 0)
+                                {
+
+                                    data.Add(new
+                                    {
+                                        added = true,
+                                        prc = price,
+                                        code = itmcode,
+                                        qtyx = qty,
+                                        dat = date
+
+                                    });
+                                }
+                                else
+                                {
+                                    Response.Write("<script>alert('Cant add!')</script>");
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }

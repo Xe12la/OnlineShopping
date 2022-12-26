@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "Sample";
+}
+
+<h2>Sample</h2>
+
+<button id="login">Login</button>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="text/javascript" src="~/Scripts/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $("#login").click(function () {
+        Swal.fire({
+            title: 'Confirm Payment',
+            html: `<input type="text" id="fname" class="swal2-input" placeholder="First Name">
+                   <input type="text" id="lname" class="swal2-input" placeholder="Last Name">
+                   <input type="text" id="address" class="swal2-input" placeholder="Delivery Address">`,
+                confirmButtonText: 'Confirm',
+                focusConfirm: false,
+                preConfirm: () => {
+                                const fname = Swal.getPopup().querySelector('#fname').value
+                                const lname = Swal.getPopup().querySelector('#lname').value
+                                const address = Swal.getPopup().querySelector('#address').value
+                if (!lname || !address) {
+                    Swal.showValidationMessage(`Please enter the details`)
+                }
+                return { fname: fname, lname: lname, address: address }
+            }
+            }).then((result) => {
+                    Swal.fire(`
+            fname: ${result.value.fname}
+            lname: ${result.value.lname}
+            address: ${result.value.address}
+          `.trim())
+        })
+    });
+
+   
+
+</script>

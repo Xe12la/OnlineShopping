@@ -1,0 +1,249 @@
+﻿@using System;
+@using System.Collections.Generic;
+@using System.Data;
+@using System.Data.SqlClient;
+@using System.IO;
+@using System.Linq;
+@using System.Web;
+@using System.Web.Configuration;
+
+@{
+    Layout = null;
+    if (Session["email"] == null)
+    {
+        Response.Redirect("~/Home/LogIn");
+    }
+    else
+    {
+
+    }
+}
+    <style>
+        body {
+            background-image: url('../../photos/alpha-revamped-mobile-legends-wallpaper-hd.jpg');
+            background-size: cover;
+            background-position: center center;
+        }
+    </style>
+
+<html>
+<body>
+
+
+    <link href="~/fonts/StyleSheet.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-theme.min.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="more options">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("A's E-Game Shop", "Index", "ListAllProducts", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li>@Html.ActionLink("List All Product", "ListAllProducts", "Home")</li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li>@Html.ActionLink("EWALLET", "Ewallet", "Home")</li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li>
+                        <button class="btn-sm" value="MyCart" onclick="location.href='@Url.Action("Payment","Home")'">
+                            <span>
+                                <img src="~/photos/Cart-PNG-Transparent.png" height="30" width="30" />
+                            </span>
+                            <span>My Cart</span>
+                        </button>
+                    </li>
+                    <li><a><span class="badge">Hi! @Session["email"]</span></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href="@Url.Action("LogOut","Home")">Log Out</a></li>
+
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    <center>
+        <h2 style="color:white;">ListAllProducts</h2>
+        <div style="color:white;">
+            Search Here:&nbsp;&nbsp;<input style="text-decoration-color:inherit; color:black;" id="searchItem" type="text" placeholder="Search.. ">
+        </div>
+    </center>
+    <br />
+
+    @{
+        @*<button class="btn-primary"><span class="badge">@Session["email"]</span></button>*@
+
+
+
+        string connDB = WebConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
+        using (var db = new SqlConnection(connDB))
+        {
+            db.Open();
+            using (var cmd = db.CreateCommand())
+            {
+
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM ITMTBL";
+
+
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+
+                        <div class="container d-flex-row  text-center">
+                            <center>
+
+                                @if (reader.Read())
+                                {
+                                    <table border="1">
+                                        <thead>
+                                            <tr>
+                                                <th style="color:white;">
+                                                    <center>Products</center>
+                                                </th>
+
+                                            </tr>
+
+                                        </thead>
+                                        <tbody id="Product">
+                                            @while (reader.Read())
+                                            {
+
+                                                <tr id="items" style="padding:7px 5px 8px; ">
+
+                                                    <td class="price" align="center" width="500" style="padding: 20px 30px 20px; border-block:40px double lightblue">
+                                                        <div class=" product-content justify-content-center">
+                                                            <div class="product-image">
+                                                                <img src="../Home/Image?filename=@HttpUtility.UrlEncode(reader["ITMIMG"] + "")" width="150" height="150" />
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                        <div style="background-color: #7752FF ">
+                                                            <div>
+                                                                <h3 id="itmname" class="name" style="text-decoration-thickness:from-font; color:white ">
+                                                                    @reader["ITMNAME"]
+                                                                </h3>
+                                                            </div>
+                                                            <div>
+                                                                <button class="badge">
+                                                                    <span>Available:</span>
+                                                                    <span id="onhand">@reader["ITMONHAND"]</span>
+                                                                </button>
+                                                            </div>
+                                                            <div>
+                                                                <p class="price-container" style="color:white;">
+                                                                    <span> Price: ₱</span>
+                                                                    <span id="price">@reader["ITMPRICE"]</span>
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <p style="color:white;">
+                                                                    <span>Post Date:</span>
+                                                                    <span class="tag1">@reader["ITMDATE"]</span>
+                                                                </p>
+                                                            </div>
+                                                            <div class="description" style="color:white;">
+                                                                <span>Item Number:</span>
+                                                                <p id="itmnum">@reader["ITMNUM"]</p>
+                                                                <p class="mb-0">Product description:<br /> @reader["ITMDESC"]</p>
+                                                            </div>
+                                                            <div class="row mt-3 justify-content-center">
+                                                                <div class="form-group mx-sm-3 mb-2">
+                                                                    <input type="number" style="width: 90px;height: 25px;" class="form-control" id="txtqty" value="0" min="0">
+                                                                </div>
+
+                                                                <div class="col-6 text-center ">
+                                                                    <button type="button"
+                                                                            name="btnsbmt" class="btnCart btn btn-success">
+                                                                        <i class="glyphicon glyphicon-shopping-cart"></i> &nbsp Add to cart
+                                                                    </button>
+                                                                </div>
+                                                            </div><br />
+                                                        </div>
+
+                                                    </td>
+
+                                                </tr>
+
+
+                                            }
+
+                                        </tbody>
+                                    </table>
+
+                                }
+                            </center>
+                        </div>
+                    }
+
+                }
+            }
+        }
+   
+    }
+ </body>
+ </html>
+
+    <script type="text/javascript" src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(".btnCart").each(function () {
+
+            $(this).click(function () {
+                var itmnum = $(this).closest('#items').find('#itmnum').html();
+                var onhand = $(this).closest('#items').find('#onhand').html();
+                var qty = $(this).closest('#items').find('#txtqty').val();
+                var price = $(this).closest('#items').find('#price').html();
+                var name = $(this).closest('#items').find('#itmname').html();
+                var negative = "0";
+                if ((parseInt(qty) <= parseInt(onhand)) && (parseInt(negative) < parseInt(qty))) {
+
+                    $.post("../Home/Cart1", {
+                        itmnum: itmnum,
+                        qty: qty,
+                        itemprice: price,
+                        name: name
+                    }, function (res) {
+
+
+                        if (res[0].exist) {
+                            alert("Added To Quantity");
+                        } else {
+
+                        }
+
+                        if (res[0].added) {
+                            alert("Succesfull Added");
+                        }
+
+
+                    });
+                } else {
+                    alert('Something went Wrong!');
+                }
+
+            });
+        });
+
+        $(document).ready(function () {
+            $("#searchItem").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#Product tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+
+                });
+            });
+        });
+
+    </script>

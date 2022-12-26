@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewBag.Title = "LogIn";
+  
+}
+
+
+<html>
+<head>
+</head>
+<body>
+    <form id="logIn" action="../Home/LogIn" method="post" enctype="multipart/form-data">
+        <br />
+        <br />
+        <br />
+        <div style="height: 400px;  ">
+            <div style="float:left; width: 45%; padding: 10px; height: 400px; background-color:none; ">
+            </div>
+            <div style=" float: right; width: 55%; padding: 10px; height: 400px; background-color: none; border: 1px solid lightgrey; justify-content: center">
+                <h2 style="color:white;">Log In</h2>
+                <div style="margin-left:150px; ">
+                    <br />
+
+                    <h3 style="color:white;">USERNAME</h3> <br />
+                    <input type="text" id="txtUsername" name="txtUsername" required /><br />
+                    <h3 style="color:white;">PASSWORD</h3> <br />
+                    <input type="password" id="txtPassword" name="txtPassword" required />
+                    <br />
+                    <br />
+                    <input id="btnLogIn" style="width: 200px; height:50px; background-color:darkseagreen; color:white; " type="submit" value="Log In" /><br />
+                </div>
+            </div>
+
+
+        </div>
+    </form>
+
+    <script type="text/javascript" src="~/Scripts/jquery-3.6.0.min.js"></script>
+</body>
+</html>

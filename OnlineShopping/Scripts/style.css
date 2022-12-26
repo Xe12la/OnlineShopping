@@ -1,0 +1,170 @@
+.show-cart li {
+  display: flex;
+}
+.card {
+  margin-bottom: 20px;
+}
+.card-img-top {
+  width: 200px;
+  height: 200px;
+  align-self: center;
+}
+.btn-22 {
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: Marvel;
+    font-size: 20pt;
+    width: 200px;
+    height: 45px;
+    position: relative;
+    color: white;
+    z-index: 1;
+    transition: all 0.5s ease-in-out;
+    border-radius: 0px;
+    background: transparent;
+    padding: 0;
+    overflow: hidden;
+    border: none;
+}
+
+    .btn-22:before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, transparent, red);
+        animation: btn-22-right 2s linear infinite;
+        transition: 0.5s ease-in-out;
+    }
+
+    .btn-22:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 2px;
+        height: 100%;
+        background: linear-gradient(to bottom, transparent, red);
+        animation: btn-22-bottom 2s linear infinite;
+        animation-delay: 1s;
+        transform: translateY(-100%);
+    }
+
+    .btn-22 span {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+        padding: 4px;
+    }
+
+        .btn-22 span:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to left, transparent, red);
+            animation: btn-22-left 2s linear infinite;
+        }
+
+        .btn-22 span:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to top, transparent, red);
+            animation: btn-22-top 2s linear infinite;
+            animation-delay: 1s;
+            transform: translateY(-100%);
+        }
+
+    .btn-22:hover:before {
+        background: linear-gradient(to right, transparent, red);
+    }
+
+    .btn-22:hover:after {
+        background: linear-gradient(to bottom, transparent, red);
+    }
+
+    .btn-22 span:hover:before {
+        background: linear-gradient(to top, transparent, red);
+    }
+
+    .btn-22 span:hover:after {
+        background: linear-gradient(to left, transparent, red);
+    }
+
+    .btn-22:hover {
+        color: red;
+    }
+
+    .btn-22:active:before {
+        background: linear-gradient(to right, transparent, #00a7fc);
+    }
+
+    .btn-22:active:after {
+        background: linear-gradient(to bottom, transparent, #00a7fc);
+    }
+
+    .btn-22 span:active:before {
+        background: linear-gradient(to top, transparent, #00a7fc);
+    }
+
+    .btn-22 span:active:after {
+        background: linear-gradient(to left, transparent, #00a7fc);
+    }
+
+    .btn-22:active {
+        color: #00a7fc;
+    }
+
+@keyframes btn-22-right {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes btn-22-top {
+    0% {
+        transform: translateY(100%);
+    }
+
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes btn-22-left {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes btn-22-bottom {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+.btn-22:focus {
+    outline: none
+}

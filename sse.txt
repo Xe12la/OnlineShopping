@@ -1,0 +1,33 @@
+ <style>
+        body {
+            background-image: url('../../photos/alpha-revamped-mobile-legends-wallpaper-hd.jpg');
+            background-size: cover;
+            background-position: center center;
+        }
+    </style>
+<html>
+<body>
+
+</body>
+</html>
+
+Layout = null;
+    if (Session["email"] == null)
+    {
+        Response.Redirect("~/Home/LogIn");
+    }
+    else
+    {
+alert("HTML: " + price);
+alert("HTML: " + $("#test").html());
+    class="btn-22"
+
+}
+style="color:white;"
+
+<span>₱</span>@reader["ITMPRICE"]
+
+
+1. screentshot of the output with data
+2.  aspx file
+3. cs file

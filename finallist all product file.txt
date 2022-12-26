@@ -1,0 +1,70 @@
+//homecontroller
+ public ActionResult Cart()
+        {
+            var data = new List<object>();
+            var itmcode = Request["itemno"].Trim();
+            var qty = Request["qty"].Trim();
+            var price = Request["price"].Trim();
+            string email = Session["email"].ToString();
+
+            //Try to add the information in DB
+            using (var db = new SqlConnection(connDB))
+            {
+                db.Open();
+                using (var cmd = db.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "INSERT INTO ORDERTBL (ITMNO,ITMQTY,ITMPRICE, EMAIL)"
+                        + " VALUES ("
+                        + " @NUM,"
+                        + " @QTY,"
+                        + " @PRICE,"
+                        + " @EMAIL)";
+                    cmd.Parameters.AddWithValue("@NUM", itmcode);
+                    cmd.Parameters.AddWithValue("@QTY", qty);
+                    cmd.Parameters.AddWithValue("@PRICE", price);
+                    cmd.Parameters.AddWithValue("@EMAIL", email);
+                    var ctr = cmd.ExecuteNonQuery();
+                    if (ctr >= 1)
+                    {
+                        Response.Write("<script>alert('Add to Cart(hc)')</script>");
+                    }
+                    else
+                        Response.Write("<script>alert('Failed to add the item to your cart.')</script>");
+                }
+            }
+
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+//CSHTML file listall product
+
+<script type="text/javascript" src="~/Scripts/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(".btnCart").each(function () {
+        $(this).click(function () {
+            var itmnum = $(this).closest('.items').find('.itmnum').html();
+            var onhand = $(this).closest('.items').find('.onhand').html();
+            var price = $(this).closest('.items').find('.price').html();
+            var qty = $(this).closest('.items').find('.txtqty').val();
+
+            if (parseInt(qty) <= parseInt(onhand)) {
+                //alert(qty + " " + itmnum);
+                $.post("../home/Cart", {
+                    itemno: itmnum,
+                    qty: qty,
+                    price: price,
+                    //NAG HUNA2 PA IF MA OKAY NANI NGA CODE... HOPEFULY
+                }, function (res) {
+
+                });
+               alert('Added to Cart');
+            } else {
+                alert('insufficient stocks');
+            }
+
+            //alert(itmnum);
+        });
+    });
+</script>

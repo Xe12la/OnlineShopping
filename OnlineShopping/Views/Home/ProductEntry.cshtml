@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "ProductEntry";
+}
+<html>
+<head>
+    <link rel="stylesheet" href="~/Content/showProduct.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            background-image: url('../../photos/alpha-revamped-mobile-legends-wallpaper-hd.jpg');
+            background-size: cover;
+            background-position: center center;
+        }
+    </style>
+</head>
+<body>
+    <link href="~/fonts/StyleSheet.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="~/Scripts/style.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="more options">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("A's E-Game Shop", "AdminView", "Home", new { area = "AdminView" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li>@Html.ActionLink("Manage Product", "ManageProducts", "Home")</li>
+                    <li><a href=""></a></li>
+                    <li>@Html.ActionLink("Product Entry", "ProductEntry", "Home")</li>
+                    <li><a href=""></a></li>
+                    <li>@Html.ActionLink("Update Product", "UpdateProduct", "Home")</li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a><span class="badge">Hi! Admin Alex</span></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href="@Url.Action("LogOut","Home")">Log Out</a></li>
+
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <form id="productRecord" action="../Home/ProductEntry" method="post" enctype="multipart/form-data">
+
+        <div style="height:720px;">
+            
+            <div style="float: inherit; width: 35%; padding: 10px; height: 698px; background-color: none; border: 1px solid lightgrey;">
+                <h2 style="color:white;">Product Entry</h2><br />
+
+                <h4 style="color:white;">Product Code</h4>
+                <input type="text" id="txtCode" name="txtCode" /><br />
+                <h4 style="color:white;">Product Name</h4>
+                <input type="text" id="txtName" name="txtName" required /><br />
+                <h4 style="color:white;">Product Description</h4>
+                <input type="text" id="txtDesc" name="txtDesc" required style="width:180%;" /><br />
+                <h4 style="color:white;">Items / Category</h4>
+                <select id="Category" name="Category">
+                    <option value="MOV(Movement of Speed)">MOV(Movement of Speed)</option>
+                    <option value="MGC(MAgic)">MGC(MAgic)</option>
+                    <option value="JNG(Jungle)">JNG(Jungle)</option>
+                    <option value="DEF(Defense)">DEF(Defense)</option>
+                    <option value="ATK(Attack)">ATK(Attack)</option>
+                </select><br />
+                <h4 style="color:white;">Price</h4>
+                <input type="number" id="txtprice" name="txtprice" min="0" value="0" step=".01" /><br />
+                <h4 style="color:white;">Quantity on Hand</h4>
+                <input type="number" id="txtonhand" name="txtonhand" min="0" /><br />
+                <h4 style="color:white;">Date</h4>
+                <input type="text" id="datepicker" name="datepicker" value="@DateTime.Now.ToShortDateString()" />
+                <br /><br />
+                <input type="file" id="uploadImg" name="uploadImg"
+                       accept="image/png,image/jpeg,image/jpg,image/gif,image/bmp"
+                       onchange="getImagePreview()" style="color:white;" required />
+                <div id="preview">
+
+                </div><br />
+
+                <input class="glyphicon glyphicon-floppy-save" id="btnSaveProd" type="submit" value="Save" /><br />
+
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript" src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/myScripts/myScript.js"></script>
+
+</body>
+</html>

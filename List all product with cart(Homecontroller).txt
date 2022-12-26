@@ -1,0 +1,146 @@
+//listAllProduct.cshtml
+
+
+<h2>List All Products</h2>
+@{
+    string connDB = WebConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
+    using (var db = new SqlConnection(connDB))
+    {
+        db.Open();
+        using (var cmd = db.CreateCommand())
+        {
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT * FROM ITMTBL";
+            using (var reader = cmd.ExecuteReader())
+            {
+                if (reader.HasRows)
+                {
+    <table border="1">
+        <thead>
+            <tr>
+                <th width="15%">
+                    Item Number
+                </th>
+                <th width="10%">
+                    Quantity
+                </th>
+                <th width="15%">
+                    Price
+                </th>
+                <th>
+                    Image
+                </th>
+
+            </tr>
+
+        </thead>
+        <tbody>
+            @while (reader.Read())
+            {
+                <tr class="items">
+                    <td class="itmnum">
+                        @reader["ITMNUM"]
+                    </td>
+                    <td class="onhand">
+                        @reader["ITMONHAND"]
+                    </td>
+                    <td class="price">
+                        @reader["ITMPRICE"]
+                    </td>
+                    <td>
+                        <center>
+                            <img src="../Home/Image?filename=@HttpUtility.UrlEncode(reader["ITMIMG"]+"")" width="20%" /> <br />
+                            @String.Format("{0:0.00}", reader["ITMNAME"]);<br />
+                            <input type="number" class="txtqty" name="txtqty" step="1" /><br />
+                            <input type="button" class="btnCart" name="btnsbmt" value="Add to Cart" />
+                        </center><br /><br />
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+        Date:<input type = "text" id = "datepicker" name = "datepicker" class="datepicker" value = "@DateTime.Now.ToShortDateString()" />
+    </table>
+                   
+                }
+                else
+                {
+                    <p>No Records Found!!!</p>
+                }
+            }
+        }
+    }
+}
+
+<script type="text/javascript" src="~/Scripts/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(".btnCart").each(function () {
+        $(this).click(function () {
+            var itmnum = $(this).closest('.items').find('.itmnum').html();
+            var onhand = $(this).closest('.items').find('.onhand').html();
+            var price = $(this).closest('.items').find('.itmprice').html();
+            var qty = $(this).closest('.items').find('.txtqty').val();
+            var date = $(this).find('.datepicker').val();
+
+            if (parseInt(qty) <= parseInt(onhand)) {
+                //alert(qty + " " + itmnum);
+                $.post("../Home/Cart", {
+                    itemno: itmnum,
+                    qty: qty,
+                    price: price,
+                    dateOrder: date,
+                    //not done
+                    //NAG HUNA2 PA IF MA OKAY NANI NGA CODE... HOPEFULY
+                } , function (res) {
+
+                });
+                alert('Added to Cart');
+            } else {
+                alert('insufficient stocks');
+            }
+
+            //alert(itmnum);
+        });
+    });
+</script>
+
+//Home Controller
+
+ public ActionResult Cart()
+        {
+            var data = new List<object>();
+            var itmcode = Request["itemno"].Trim();
+            var qty = Request["qty"].Trim();
+            double price = Convert.ToDouble(Request["price"]);
+            var dateadded = Request["date"];
+
+            ////Try to add the information in DB
+            using (var db = new SqlConnection(connDB))
+            {
+                db.Open();
+                using (var cmd = db.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "INSERT INTO ORDER (ITMNO,ITMQTY,ITMPRICE,DTADDED)"
+                        + " VALUES ("
+                        + " @NUM,"
+                        + " @QTY,"
+                        + " @PRICE,"
+                        + " @DATE,";
+                    cmd.Parameters.AddWithValue("@NUM", itmcode);
+                    cmd.Parameters.AddWithValue("@QTY", qty);
+                    cmd.Parameters.AddWithValue("@PRICE", price);
+                    cmd.Parameters.AddWithValue("@DATE", dateadded);
+                    var ctr = cmd.ExecuteNonQuery();
+                    if (ctr >= 1)
+                    {
+                        Response.Write("<script>alert('Add to Cart(hc)')</script>");
+                    }
+                    else
+                        Response.Write("<script>alert('Failed to add the item to your cart.')</script>");
+                }
+            }
+
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+            }

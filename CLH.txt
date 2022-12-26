@@ -1,0 +1,224 @@
+//Mycart.cshtml
+@using System;
+@using System.Collections.Generic;
+@using System.Linq;
+@using System.Web;
+@using System.Web.Mvc;
+@using System.Data;
+@using System.Data.SqlClient;
+@using System.Configuration;
+@using System.Web.Configuration;
+@using System.IO;
+@using System.Drawing;
+@using System.Drawing.Imaging;
+
+@{
+    ViewBag.Title = "Mycart";//bantay sa view bag basin di ta pareha.
+}
+
+
+@{
+
+
+    string connDB = WebConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
+    using (var db = new SqlConnection(connDB))
+    {
+        db.Open();
+        using (var cmd = db.CreateCommand())
+        {
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT * FROM ORDERTBL WHERE EMAIL='" + Session["email"].ToString() + "'";
+            using (var reader = cmd.ExecuteReader())
+            {
+                if (reader.HasRows)
+                {
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th width="15%">
+                                    Item Number
+                                </th>
+                                <th width="10%">
+                                    Quantity
+                                </th>
+                                <th width="15%">
+                                    Price
+                                </th>
+                                <th>
+                                    Image
+                                </th>
+
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            @while (reader.Read())
+                            {
+                                <tr class="items">
+                                    <td class="itmnum" align="center">
+                                        @reader["ITMNO"]
+                                    </td>
+                                    <td class="quantity" align="center">
+                                        @reader["ITMQTY"]
+                                    </td>
+                                    <td class="price" align="center">
+                                        @reader["ITMPRICE"]
+                                    </td>
+                                    <td>
+                                        <center> <img src="../Home/Image?filename=@HttpUtility.UrlEncode(reader["ITMIMG"]+"")" width="20%" /> 
+                                        <br />
+                                        <br />
+                                         <button>@String.Format("{0:0.00}", reader["ITMNAME"])</button>
+                                        <br />
+                                            <br />
+                                            <br />
+                                            
+                                        </center><br /><br />
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                }
+                else
+                {
+                    <p>No Records Found!!!</p>
+                }
+
+            }
+        }
+    }
+}
+
+//homecontroller
+public ActionResult Cart()
+        {
+            var data = new List<object>();
+            var itmcode = Request["itemno"].Trim();
+            var qty = Request["qty"];
+            var price = "";
+            string email = Session["email"].ToString();
+            var itmimg = "";
+            var itemname = "";
+            using (var db1 = new SqlConnection(connDB))
+            {
+                db1.Open();
+                using (var cmd = db1.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "SELECT * FROM ITMTBL WHERE ITMNUM='" + itmcode + "'";
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        itmimg = reader["ITMIMG"].ToString();
+                        price = reader["ITMPRICE"].ToString();
+                        itemname = reader["ITMNAME"].ToString();
+
+                    }
+                }
+                db1.Close();
+
+            }
+            //Try to add the information in DB
+            using (var db = new SqlConnection(connDB))
+            {
+                db.Open();
+                using (var cmd2 = db.CreateCommand())
+                {
+                    cmd2.CommandType = CommandType.Text;
+                    cmd2.CommandText = "SELECT * FROM ORDERTBL WHERE ITMNO ='" + itmcode + "'";
+                    SqlDataReader reader = cmd2.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        data.Add(new
+                        {
+                            exist = true,
+                        });
+                        return Json(data, JsonRequestBehavior.AllowGet);
+
+                    }
+                    else
+                    {
+                        using (var db2 = new SqlConnection(connDB))
+                        {
+                            db2.Open();
+                            using (var cmd = db2.CreateCommand())
+                            {
+                                cmd.CommandText = "INSERT INTO ORDERTBL (ITMNO,ITMQTY,ITMPRICE, EMAIL, ITMNAME, ITMIMG)"
+                                                                            + " VALUES ("
+                                                                            + " @NUM,"
+                                                                            + " @QTY,"
+                                                                            + " @PRICE,"
+                                                                            + " @EMAIL,"
+                                                                            + " @INAME,"
+                                                                            + " @ITEMIMAGE)";
+                                cmd.Parameters.AddWithValue("@NUM", itmcode);
+                                cmd.Parameters.AddWithValue("@QTY", qty);
+                                cmd.Parameters.AddWithValue("@PRICE", price);
+                                cmd.Parameters.AddWithValue("@EMAIL", email);
+                                cmd.Parameters.AddWithValue("@INAME", itemname);
+                                cmd.Parameters.AddWithValue("@ITEMIMAGE", itmimg);
+                                var ctr = cmd.ExecuteNonQuery();
+                                if (ctr >= 1)
+                                {
+                                    Response.Write("<script>alert('Add to Cart(hc)')</script>");
+                                    data.Add(new
+                                    {
+                                        price = price,
+                                        code = itmcode,
+                                        qty = qty
+
+
+                                    });
+
+                                }
+                                else
+                                {
+                                    Response.Write("<script>alert('Failed to add the item to your cart.')</script>");
+                                }
+                            }
+                        }
+                    }
+
+
+
+
+                }
+            }
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+
+//last sa list all view Script
+
+
+<script type="text/javascript" src="~/Scripts/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(".btnCart").each(function () {
+        $(this).click(function () {
+            var itmnum = $(this).closest('.items').find('.itmnum').html();
+            var onhand = $(this).closest('.items').find('.onhand').html();
+            //var price = $(this).closest('.items').find('.price').html();
+            //var name = $(this).closest('.items').find('#itemname').html();
+            var qty = $(this).closest('.items').find('.txtqty').val();
+
+            if (parseInt(qty) <= parseInt(onhand)) {
+                //alert(qty + " " + itmnum);
+                $.post("../home/Cart1", {
+                    itemno: itmnum,
+                    qty: qty,
+                    //NAG HUNA2 PA IF MA OKAY NANI NGA CODE... HOPEFULY
+                }, function (res) {
+
+                });
+               alert('Added to Cart');
+            } else {
+                alert('insufficient stocks');
+            }
+
+            //alert(itmnum);
+        });
+    });
+</script>

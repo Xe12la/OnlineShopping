@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Registration";
+}
+
+
+<html>
+<head>
+    <style>
+        body {
+            background-image: url('../../photos/alpha-revamped-mobile-legends-wallpaper-hd.jpg');
+            background-size: cover;
+            background-position: center center;
+        }
+    </style>
+</head>
+<body>
+    <form id="register" action="../Home/Registration" method="post" enctype="multipart/form-data">
+        <br />
+        <br />
+        <div style="height:1050px;">
+            <div style="float:left; width: 45%; padding: 10px; height: 1050px; background-color:none; ">
+                <br />
+            </div>
+            <div style=" float: right; width: 55%; padding: 10px; height: 900px; background-color: none; border: 1px solid lightgrey; justify-content: center">
+                <h2 class="center-content-div" style="color:white;">Create Account</h2>
+                <div style="margin-left:150px; ">
+                    <br />
+                    <h4 style="color:white;">Role</h4>
+                    <input type="radio" id="rdRole" name="rdRole" value="Admin">
+                    <label for="RoleAdmin" style="color:white;">Admin</label>
+                    <input type="radio" id="rdRole" name="rdRole" value="User">
+                    <label for="RoleUser" style="color:white;">User</label><br>
+                    <h4 style="color:white;">Lastname</h4>
+                    <input type="text" id="txtLastname" name="txtLastname" required /><br />
+                    <h4 style="color:white;">Firstname</h4>
+                    <input type="text" id="txtFirstname" name="txtFirstname" required /><br />
+                    <h4 style="color:white;">Address</h4>
+                    <input type="text" id="txtAddress" name="txtAddress" required /><br />
+                    <h4 style="color:white;">Date of Birth</h4>
+                    <input type="date" id="txtBdate" name="txtBdate" required /><br />
+                    <h4 style="color:white;">Contact Number</h4>
+                    <input type="text" id="txtContact" name="txtContact" /><br />
+                    <h4 style="color:white;">Email Address</h4>
+                    <input type="email" id="txtEmail" name="txtEmail" required /><br />
+                    <h4 style="color:white;">Username</h4>
+                    <input type="text" id="txtUsername" name="txtUsername" required /><br />
+                    <h4 style="color:white;">Password</h4>
+                    <input type="password" id="txtPassword" name="txtPassword" required />
+                    <span id="pswdCheck" style=" color: red; "></span><br />
+                    <h4 style="color:white;">Confirm Password</h4>
+                    <input type="password" id="txtConPassword" name="txtConPassword" required />
+                    <span id="checkPasswordMatch"></span>
+
+                    <br />
+                    <br />
+                    <br />
+                    <input id="btnSubmit" style="width: 200px; height: 50px; background-color: darkseagreen; color: white; " type="submit" value="REGISTER" /><br />
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+    <script type="text/javascript" src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/myScripts/Registration.js"></script>
+</body>
+</html>

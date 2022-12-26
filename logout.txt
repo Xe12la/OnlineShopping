@@ -1,0 +1,19 @@
+    //ListAllProducts 
+
+Layout = null;
+    if (Session["email"] == null)
+    {
+        Response.Redirect("~/Home/LogIn");
+    }
+    else
+    {
+
+    }
+
+//HomeController
+public ActionResult LogOut()
+        {
+            Session.Abandon();
+            return RedirectToAction("LogIn", "Home");
+
+        }

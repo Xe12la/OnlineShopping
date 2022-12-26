@@ -1,0 +1,187 @@
+//UpdateProduct.cshtml
+@{
+    ViewBag.Title = "UpdateProduct";
+}
+
+<h2>UpdateProduct</h2>
+
+<hr />
+<br />
+<html>
+<body>
+    Product Code<br />
+    <input type="text" id="itmcde" name="itmcde" required />&nbsp;&nbsp;
+    <input type="button" id="btnSearch" name="btnSearch" value="Search" />
+    <br />
+    Product Name <br />
+    <input type="text" id="itmname" name="itmname" required /><br /><br />
+    Product  Price <br />
+    <input type="text" id="itmprice" name="itmprice" required /><br /><br />
+    Product Quantity <br />
+    <input type="text" id="itmonhand" name="itmonhand" required /><br /><br />
+    <input type="button" id="btnEdit" name="btnEdit" value="Edit" />
+    <input type="button" id="btnUpdate" name="btnUpdate" value="Update" />
+
+    <script type="text/javascript" src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="~/Scripts/myScripts/UpdateItem.js"></script>
+    <script type="text/javascript" src="~/Scripts/myScripts/myScript.js?data=@DateTime.Now.ToString("mmss")"></script>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+</body>
+</html>
+
+
+//home controller
+public ActionResult SearchItem()
+        {
+            var data = new List<object>();
+            var itmcode = Request["itemcode"];
+            using (var db = new SqlConnection(connDB))
+            {
+                db.Open();
+                using (var cmd = db.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "SELECT * FROM ITMTBL WHERE ITMNUM='" + itmcode + "'";
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        data.Add(new
+                        {
+                            mess = 0,
+                            desc = reader["itmname"].ToString(),
+                            price = reader["itmprice"].ToString(),
+                            onhand = reader["itmonhand"].ToString(),
+                        }) ;
+                    }
+                    else
+                    {
+                        data.Add(new
+                        {
+                            mess = 1,
+                        });
+                    }
+                }
+            }
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult UpdateItem()
+        {
+            var data = new List<object>();
+
+            var itmcode = Request["itemcode"];
+            var itmname = Request["itmname"];
+            var itmprice = Request["itemprice"];
+
+
+            using (var db = new SqlConnection(connDB))
+            {
+                db.Open();
+                using (var cmd = db.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "UPDATE ITMTBL SET "
+                        + " ITMNAME ='" + itmname + "',"
+                        + " ITMPRICE ='" + itmprice + "'"
+                        + " WHERE ITMNUM='" + itmcode + "'";
+                    var ctr = cmd.ExecuteNonQuery();
+                    if (ctr > 0)
+                    {
+                        data.Add(new
+                        {
+                            mess = 0
+                        });
+                    }
+                    else
+                    {
+                        data.Add(new
+                        {
+                            mess = 1
+                        });
+                    }
+                }
+            }
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+//UpdateItems.js
+
+$().ready(function () {
+    $("#btnEdit").hide();
+    $("#btnUpdate").hide();
+    $("#itmname").attr("disabled", "disabled");
+    $("#itmprice").attr("disabled", "disabled");
+    $("#itmonhand").attr("disabled", "disabled");
+
+    $("#btnSearch").click(function () {
+
+        $("#btnEdit").attr("disabled", "disabled");
+        var itemcode = $("#itmcde").val();
+
+        $.post("../Home/SearchItem", {
+            itemcode: itemcode
+        }, function (res) {
+            if (res[0].mess == 0) {
+                $("#btnEdit").removeAttr("disabled");
+                $("#btnEdit").show();
+                $("#itmname").val(res[0].desc);
+                $("#itmprice").val(res[0].price);
+                $("#itmonhand").val(res[0].onhand);
+            } else {
+                alert('Invalid Item code');
+            }
+        });
+    });
+
+    $("#btnEdit").click(function () {
+        $("#btnEdit").hide();
+        $("#btnUpdate").show();
+        $("#itmcde").attr("disabled", true);
+        $("#itmname").removeAttr("disabled");
+        $("#itmprice").removeAttr("disabled");
+        $("#itmonhand").removeAttr("disabled");
+        alert("Click OK to edit item (" + $("#itmname").val() + ")");
+    });
+
+    $("#btnUpdate").click(function () {
+        var itmname = $("#itmname").val();
+        var itemprice = $("#itmprice").val();
+        var itemcode = $("#itmcde").val();
+        var itmonhand = $("#itmonhand").val();
+
+        $.post("../Home/UpdateItem", {
+            itmname: itmname,
+            itemprice: itemprice,
+            itemcode: itemcode,
+            itmonhand: itmonhand
+
+        }, function (res) {
+            if (res[0].mess == 0) {
+                alert("Successfully Updated");
+                $("#btnUpdate").hide();
+                $("#itmcde").removeAttr("disabled").val();
+                $("#itmname").attr("disabled", true).val();
+                $("#itmprice").attr("disabled", true).val();
+                $("#itmonhand").attr("disabled", true).val();
+
+            } else
+                alert("Ooooppppssss.. Something Wrong");
+        });
+    });
+
+});
